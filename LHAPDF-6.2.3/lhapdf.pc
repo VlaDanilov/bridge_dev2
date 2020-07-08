@@ -1,4 +1,4 @@
-prefix=/home/andy/heplocal
+prefix=/afs/desy.de/user/v/volinar/bridge_dev2/Main
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include

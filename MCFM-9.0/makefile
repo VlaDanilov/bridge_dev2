@@ -4,10 +4,22 @@ USEMPI = NO
 # Set this to NATIVE/PDFLIB/LHAPDF
 #   NATIVE -- internal routines
 #   LHAPDF -- Les Houches library
-PDFROUTINES = NATIVE
+PDFROUTINES = LHAPDF
 
 # Replace this with the location of LHAPDF on your system (if desired)
-LHAPDFLIB   = 
+
+LHAPDFLIB=$(shell lhapdf-config --ldflags)
+PDFDIR = $(shell lhapdf-config --pdfsets-path)
+
+LDFLAGS +=  $(shell mcfmbridge-config --ldflags )
+
+FASTJETINC  = $(shell fastjet-config --cxxflags)
+FASTJETLIB  = $(shell fastjet-config --libs)
+
+ROOTDIR= $(shell root-config --prefix)
+
+#export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/afs/desy.de/user/v/volinar/TestDIR/Main/lib
+
 
 OSXGFORTRAN =
 OSXGPP =
@@ -84,6 +96,8 @@ CXXFLAGS=-fopenmp -g -O2 -traceback -std=c++11 -Wall
 else
 CXXFLAGS=-fopenmp -g -O2 -std=c++11 -Wall
 endif
+
+CXXFLAGS += $(shell lhapdf-config --cxxflags)
 
 ifeq ($(USEMPI),YES)
   FFLAGS += -DHAVE_MPI
@@ -2723,9 +2737,11 @@ ifeq ($(PDFROUTINES),LHAPDF)
    fdist_lhapdf.o \
    alfamz_lhapdf.o \
    lhapdf_fortran.o
+   LIBDIR += $(LHAPDFLIB)
    LIBFLAGS += -lLHAPDF
    ifeq ($(LHAPDFLIB),)
    else
+   #print $(info ************  ${LHAPDFLIB} ************)
      LIBDIR += -Wl,-rpath=$(LHAPDFLIB) -L$(LHAPDFLIB)
    endif
    PDFMSG='   ----> MCFM compiled with LHAPDF routines <----'
@@ -2838,7 +2854,7 @@ FOROPTS = -include=$(INCPATH) -nonovice -nopretty -quiet
 
 Bin/mcfm_omp: $(ALLMCFM)
 	@$(FC) $(FFLAGS) -L$(LIBDIR) -L$(QDDIR) -L$(PVDIR) -L$(RECURDIR) -L$(OVDIR) -o $@ \
-	$(patsubst %,$(OBJNAME)/%,$(ALLMCFM)) $(LIBFLAGS) 
+	$(patsubst %,$(OBJNAME)/%,$(ALLMCFM)) $(LIBFLAGS) $(LDFLAGS) $(LDFLAGS) -L$(LIBDIR) 
 	@echo $(PDFMSG)
 	@echo $(NTUPMSG)
 	@echo "   ----> Executable is mcfm_omp <----"
@@ -2862,5 +2878,30 @@ run: Bin/mcfm_omp
 	cd $(BIN) && ./mcfm_omp
 
 # -----------------------------------------------------------------------------
+
+.PHONY : pdfsets documentation
+
+pdfsets : Bin/PDFsets
+Bin/PDFsets : 
+ifneq (x$(PDFDIR),x)
+        cd Bin ; ln -sf $(PDFDIR) .
+endif
+
+# again, make -C doesn;t seem to work here - again, it builds
+# every time ...
+# documentation : Doc/mcfm.pdf
+# Doc/mcfm.pdf  : Doc/mcfm.tex 
+#       make -C Doc mcfm.pdf 
+#
+# so explicitly change directory and issue the make 
+
+documentation : Doc/mcfm.pdf
+Doc/mcfm.pdf  : Doc/mcfm.tex
+	cd Doc ; make 
+	cd $(MCFMHOME)
+
+obj :  
+	mkdir -p obj 
+
 
 include depends.mk
