@@ -1,0 +1,75 @@
+!  Copyright (C) 2019, respective authors of MCFM.
+!
+!  This program is free software: you can redistribute it and/or modify it under
+!  the terms of the GNU General Public License as published by the Free Software
+!  Foundation, either version 3 of the License, or (at your option) any later
+!  version.
+!
+!  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+!  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+!  PARTICULAR PURPOSE. See the GNU General Public License for more details.
+!
+!  You should have received a copy of the GNU General Public License along with
+!  this program. If not, see <http://www.gnu.org/licenses/>
+ 
+      subroutine scaleset_m34(p,mu0)
+      implicit none
+      include 'types.f'
+c--- subroutine to calculate dynamic scale equal to
+c--- invariant mass of particles 3 and 4
+      
+      include 'constants.f'
+      include 'nf.f'
+      include 'mxpart.f'
+      include 'cplx.h'
+      include 'kprocess.f'
+      real(dp):: p(mxpart,4),mu0
+
+      if((kcase==kW_only) .or.
+     &   (kcase==kZ_only) .or.
+     &   (kcase==kW_1jet) .or.
+     &   (kcase==kW_2jet) .or.
+     &   (kcase==kW_3jet) .or.
+     &   (kcase==kZ_1jet) .or.
+     &   (kcase==kZ_2jet) .or.
+     &   (kcase==kZ_3jet) .or.
+     &   (kcase==kWbbbar) .or.
+     &   (kcase==kWbbmas) .or.
+     &   (kcase==kZbbbar) .or.
+     &   (kcase==kgamgam) .or.
+     &   (kcase==kgg2gam) .or.
+     &   (kcase==kgmgmjt) .or.
+     &   (kcase==kgagajj) .or.
+     &   (kcase==kggfus0) .or.
+     &   (kcase==kggfus1) .or.
+     &   (kcase==khjetma) .or.
+     &   (kcase==kggfus2) .or.
+     &   (kcase==kggfus3) .or.
+     &   (kcase==kgagajj) .or.
+     &   (kcase==kh2jmas) .or.
+     &   (kcase==kqg_tbq) .or.
+     &   (kcase==ktt_tot) .or.
+     &   (kcase==kbb_tot) .or.
+     &   (kcase==kcc_tot) .or.
+     &   (kcase==khttjet) .or.
+     &   (kcase==kHigaga) .or.
+     &   (kcase==kHgagaj) .or.
+     &   (kcase==kqq_Hqq) .or.
+     &   (kcase==kdm_jet) .or.
+     &   (kcase==kdm_gam) .or.
+     &   (kcase==kdm2jet) .or.
+     &   (kcase==kdm_gaj) .or.
+     &   (kcase==kdmgamj) .or.
+     &   (kcase==kqq_Hgg) .or.
+     &   (kcase==ktwojet)) then
+        mu0=(p(3,4)+p(4,4))**2-(p(3,1)+p(4,1))**2
+     &     -(p(3,2)+p(4,2))**2-(p(3,3)+p(4,3))**2       
+        mu0=sqrt(abs(mu0))
+      else
+        write(6,*) 'dynamicscale m(34) not supported for this process.',kcase
+        stop
+      endif
+      
+      return
+      end
+      

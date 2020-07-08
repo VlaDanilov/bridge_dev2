@@ -1,0 +1,80 @@
+\section{Installation}
+\label{sec:Installation}
+
+The \MCFM{} package may be downloaded from the \MCFM{} homepage at \url{https://mcfm.fnal.gov}.
+After extracting, the source can be compiled by first running the
+{\tt ./Install} command, which compiles some tensor reduction components
+as well as the included libraries QCDLoop and QD. Then the main part can be compiled with {\tt make} (we require GNU 
+make).
+By default, the Fortran and C compilers from GCC are used, but we also allow for the
+Intel Fortran and C compilers. These can be enabled by setting the flag
+{\tt USEINTEL} in the Install and makefile files. For the GNU compiler
+collection at least version 7 is required.
+
+If your GNU Fortran and GNU C++ compiler commands are different than gfortran
+and g++ you should export the environment variables \texttt{FC} and \texttt{CXX} to match the
+names of the gfortran and g++ compiler commands before running the Install
+script or the makefile. These variables can also be adjusted in the Install and makefile files.
+
+Additional complications may arise on OS X systems, where by default gcc/g++
+is linked to the clang compiler. Please make sure that the g++ command used
+in the files Install and makefile correspond to the actual GNU g++ compiler command,
+or export the \texttt{FC} and \texttt{CXX} environment variables.
+
+To enable the use of \LHAPDF{}, the variable \texttt{PDFROUTINES} in the makefile should be
+set to \texttt{LHAPDF}, and the path \texttt{LHAPDFLIB} can be adjusted to the path containing
+\texttt{libLHAPDF.so}. This version of \MCFM{} has been 
+explicitly tested against {\tt LHAPDF-6.2.1}. \texttt{LHAPDF} version 5 is not supported.
+
+If at the first execution of \MCFM{} the library libLHAPDF cannot be found, you can add your \LHAPDF{} library 
+path to the environment variable {\tt LD\_LIBRARY\_PATH} as follows:
+\begin{verbatim}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/user/newpath/lib
+\end{verbatim}
+
+Please ensure that your compiler is working and can produce executable program
+files. For example when your compiler has been installed into a non-standard
+location you probably need to append the compiler library path to {\tt
+LD\_LIBRARY\_PATH } ({\tt DYLD\_FALLBACK\_LIBRARY\_PATH} on OS X).  This can be
+achieved, for example, as follows:
+\begin{verbatim}
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/user/local/lib/gcc7
+\end{verbatim}
+
+The directory structure of \MCFM{} is as follows:
+\begin{itemize}
+\item {\tt Doc}. The source for this document.
+\item {\tt Bin}. The directory containing the executable {\tt mcfm\_omp},
+and various essential files -- notably the options file {\tt input.ini}.
+\item {\tt Bin/Pdfdata}. The directory containing the internal \PDF{} data-files.
+\item {\tt obj}. The object files produced by the compiler. 
+\item {\tt src}. The Fortran source files in various subdirectories.
+\item {\tt qcdloop-2.0.2}. The source files to the library QCDLoop~\cite{Carrazza:2016gav,Ellis:2007qk}.
+\item {\tt TensorReduction} General tensor reduction code based on the work of Passarino and 
+Veltman \cite{Passarino:1978jh} and Oldenborgh and Vermaseren \cite{vanOldenborgh:1989wn}.
+\item {\tt qd-2.3.22}. Library to support double-double and quad-double precision data types \cite{libqd}.
+\end{itemize}
+ 
+\subsection{OpenMP and MPI}
+\MCFM{} uses \OMP{} (Open Multi-Processing) to implement multi-threading and automatically adjusts to the 
+number of available \CPU{} threads. The multi-threading is implemented with respect to the integration routine 
+Vegas, which distributes the event evaluations over the threads and combines all events at the end of 
+every iteration.
+
+Two environment variables are useful. On some systems, depending on the \OMP{} implementation,
+the program will crash when calculating some of the more complicated processes,
+for example $W+2$~jet production at \NLO{}.
+Then, adjusting {\tt OMP\_STACKSIZE} may be needed for the program to run correctly.
+Setting thisvariable to {\tt 16000}, for instance in the Bash shell by using the
+command {\tt export OMP\_STACKSIZE=16000}, has been found to be sufficient
+for all processes.  The second useful variable {\tt OMP\_NUM\_THREADS}
+may be used to directly control the number of threads used during
+\OMP{} execution (the default is the maximum number of threads available
+on the system).
+
+It is also possible to run \MCFM{} using \MPI{} (Message Passing Interface).
+To run in this mode, change the flag {\tt USEMPI} in the makefile to {\tt YES} and specify the MPI compiler 
+wrappers and compilers in the makefilen or set the environment variables \texttt{FC} and \texttt{CXX}.
+By default, the OpenMPI compiler wrappers mpifort and mpic++ are used,
+to use gfortran and g++. When {\tt USEINTEL} is set, mpiifort and mpicc are used.
+ 

@@ -1,0 +1,1020 @@
+\section{Configuration}
+\label{Input_parameters}
+
+\subsection{Compile-time settings}
+\MCFM{} allows the user to choose between a number of schemes
+for defining the electroweak couplings. These choices are summarized
+in Table~\ref{ewscheme}. The scheme is selected by modifying the
+value of {\tt ewscheme} in {\tt src/User/mdata.f} prior to compilation, 
+which also contains
+the values of all input parameters (see also Table~\ref{default}).
+
+\begin{table}
+\begin{center}
+	\caption{Different options for the scheme used to fix the electroweak
+		parameters of the Standard Model and the corresponding default input
+		values. $M_W$ and $M_Z$ are taken from ref.~\cite{Amsler:2008zzb}.}
+	\label{ewscheme}
+	\vspace{0.5em}
+\begin{tabular}{|c|c|c|c|c|c|c|} \hline
+ Parameter & Name & Input Value
+ & \multicolumn{4}{c|}{Output Value determined by \tt ewscheme} \\
+\cline{4-7}
+& ({\tt \_inp}) & & {\tt -1} & {\tt 0} & {\tt 1} & {\tt 2} \\ \hline
+$G_F$            & {\tt Gf}      & 1.16639$\times$10$^{-5}$ 
+ & input & calculated & input & input \\
+$\alpha(M_Z)$    & {\tt aemmz}   & 1/128.89                 
+ & input & input & calculated & input \\
+$\sin^2 \theta_w$& {\tt xw}      & 0.2223               
+ & calculated & input & calculated & input \\
+$M_W$            & {\tt wmass}   & 80.385 GeV                
+ & input & calculated & input & calculated \\
+$M_Z$            & {\tt zmass}   & 91.1876 GeV               
+ & input & input & input & calculated \\
+$m_t$            & {\tt mt}      & {\tt input.ini}                  
+ & calculated & input & input & input \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+The default scheme corresponds to {\tt ewscheme=+1}. As described below, this corresponds to a scheme
+in which the top quark mass is an input parameter so that it is
+more suitable for many processes now included in the program.
+
+The choice of ({\tt ewscheme=-1}) enforces the use of an effective field
+theory approach, which is valid for scales below the top mass. In this
+approach there are 4 independent parameters (which we choose to be
+$G_F$, $\alpha(M_Z)$, $M_W$ and $M_Z$). For further details,
+see Georgi~\cite{Georgi:1991ci}.
+
+For all the other schemes ({\tt ewscheme=0,1,2}) the top mass is simply
+an additional input parameter and there are 3 other independent
+parameters from the remaining 5. The variable {\tt ewscheme} then performs
+exactly the same role as {\tt idef} in MadEvent~\cite{Maltoni:2002qb}.
+{\tt ewscheme=0} is the old MadEvent default and {\tt ewscheme=1} is the
+new MadEvent default, which is also the same as that used in 
+Alpgen~\cite{Alpgen} and LUSIFER~\cite{Lusifer} 
+For processes in which the top quark is directly produced  it is 
+preferable to use  the schemes ({\tt ewscheme=0,1,2}), since in these schemes
+one can adjust the top mass to its physical value (in the input file
+{\tt input.ini}).
+
+\begin{table}
+\begin{center}
+	\caption{Default values for the remaining parameters in \MCFM.
+		$\Gamma_W$ and $\Gamma_Z$ from ref.~\cite{Amsler:2008zzb}.}
+	\label{default} 
+	\vspace{0.5em}
+\begin{tabular}{|c|c|c|} \hline
+Parameter & Fortran name & Default value \\ 
+\hline
+$m_\tau$         & {\tt mtau}      & 1.777 GeV            \\
+$m^2_\tau$& {\tt mtausq}  & 3.1577 GeV$^2$     \\
+$\Gamma_\tau$    & {\tt tauwidth}& 2.269$\times$10$^{-12}$~GeV \\
+$\Gamma_W$       & {\tt wwidth}  & 2.093 GeV               \\
+$\Gamma_Z$       & {\tt zwidth}  & 2.4952 GeV               \\
+$V_{ud}$         & {\tt Vud}     & 0.975                  \\
+$V_{us}$         & {\tt Vus}     & 0.222             \\
+$V_{ub}$         & {\tt Vub}     & 0.                     \\
+$V_{cd}$         & {\tt Vcd}     & 0.222             \\
+$V_{cs}$         & {\tt Vcs}     & 0.975                  \\
+$V_{cb}$         & {\tt Vcb}     & 0.                     \\
+\hline
+\end{tabular}
+
+\end{center}
+\end{table}
+
+% I consider this setting dangerous, where is it used?
+
+%In the same file ({\tt mdata.f}) one can also choose the definition
+%that the program uses for computing transverse quantities, namely
+%transverse momentum or transverse energy. These are defined by,
+%\begin{eqnarray}
+%\mbox{transverse momentum:} & \sqrt{p_x^2+p_y^2} \; ,\nonumber \\
+%\mbox{transverse energy:}   &
+% \frac{E \sqrt{p_x^2+p_y^2}}{\sqrt{p_x^2+p_y^2+p_z^2}} \; .
+%\end{eqnarray}
+%The two definitions of course coincide for massless particles.
+%The chosen definition is used for all cuts that are applied to the
+%process and it is the one that is used in the default set of histograms.
+
+\subsection{Parton distributions}
+\label{subsec:pdfsets}
+The value of $\alpha_s(M_Z)$ is not adjustable; it is hardwired with the
+parton distribution. In addition, the parton distribution also specifies
+the number of loops that should be used in the running of $\alpha_s$.
+The default mode of operation is to choose from a
+collection of modern parton distribution functions that are included with
+\MCFM{}.  The distributions, together with their associated $\alpha_s(M_Z)$
+values, are given in \cref{pdlabelrecent} on \cpageref{pdlabelrecent}. In addition to these
+choices, a number of historical PDF sets are also available;
+ for details see the manual for \MCFM{}-8.0.
+Note that, 
+due to the memory requirements for
+using the NNPDF sets, in OpenMP operation it is usually necessary to increase
+the value of the environment variable {\tt OMP\_STACKSIZE} to avoid
+segmentation faults.
+%
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+{\tt pdlabel}  & $\alpha_s(M_Z)$ & order & reference \\
+\hline
+{\tt mstw8lo}  & 0.1394 & 1     & \cite{Martin:2009iq} \\
+{\tt mstw8nl}  & 0.1202 & 2     & \cite{Martin:2009iq} \\
+{\tt mstw8nn}  & 0.1171 & 3     & \cite{Martin:2009iq} \\
+{\tt MMHT\_lo}  & 0.135  & 1     & \cite{Harland-Lang:2014zoa} \\
+{\tt MMHT\_nl}  & 0.120  & 2     & \cite{Harland-Lang:2014zoa} \\
+{\tt MMHT\_nn}  & 0.118  & 3     & \cite{Harland-Lang:2014zoa} \\
+\hline
+{\tt CT10.00}  & 0.118  & 2     & \cite{Lai:2010vv} \\
+{\tt CT14.LL}  & 0.130  & 1     & \cite{Dulat:2015mca} \\
+{\tt CT14.NL}  & 0.118  & 2     & \cite{Dulat:2015mca} \\
+{\tt CT14.NN}  & 0.118  & 3     & \cite{Dulat:2015mca} \\
+{\tt CT14qed}  & 0.118  & 2     & \cite{Schmidt:2015zda} \\
+\hline
+{\tt NN2.3NL}  & 0.118  & 2     & \cite{Ball:2012cx} \\
+{\tt NN2.3NN}  & 0.118  & 3     & \cite{Ball:2012cx} \\
+{\tt NN3.0LO}  & 0.118  & 1     & \cite{Ball:2014uwa} \\
+{\tt NN3.0NL}  & 0.118  & 2     & \cite{Ball:2014uwa} \\
+{\tt NN3.0NN}  & 0.118  & 3     & \cite{Ball:2014uwa} \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Modern PDF sets that are available in the code,
+their corresponding values of $\alpha_s(M_Z)$ and order of running,
+and a reference to the paper
+that describes their origin.  Further sets, of a more historical nature, are listed in \cref{olderPDFs}.
+\label{pdlabelrecent}}
+\end{table}
+
+\subsection{Electroweak corrections}
+\label{subsec:EW}
+
+As of version 8.1, {\tt MCFM} allows the calculation of weak corrections to a
+selection of processes: {\tt 31} (neutral-current DY),
+{\tt 157} (top-pair production) and {\tt 190} (di-jet production).
+This is controlled by the flag {\tt ewcorr} in the input file.  A complete description
+of the calculations is provided in Ref.~\cite{Campbell:2016dks}.
+
+By setting {\tt ewcorr} to {\tt sudakov}, the program performs a calculation of
+the leading weak corrections to these processes using a Sudakov approximation that
+is appropriate at high energies.   The calculation of the weak corrections using the
+exact form of the one-loop amplitudes is obtained by using the flag {\tt exact}.
+A comparison between the two approaches, together with discussions of the validity of
+the Sudakov approximation, may be found in Ref.~\cite{Campbell:2016dks}.
+
+For the case of top-pair and di-jet production, the weak one-loop corrections contain
+infrared divergences that must be cancelled against corresponding real radiation
+contributions (in much the same manner as a regular NLO QCD calculation).  For this
+reason the screen output will contain two sets of iterations corresponding to the
+virtual and real contributions.
+
+For all processes, performing the calculation of weak
+corrections enables a special mode of phase-space integration that is designed to
+better-sample events produced at high-energies.  For this reason the VEGAS output that
+appears on the screen does not correspond to a physical cross-section -- and a corresponding
+warning message to this effect will be displayed.  In many cases the quantity of most interest
+is the relative correction to the leading order result ($\delta_{\rm wk}$) given by,
+\begin{equation}
+\delta_{\rm wk} = \frac{d\sigma_{\rm wk}^{NLO} - d\sigma^{LO}}{d\sigma^{LO}} \;.
+\end{equation}
+It is straightforward to compute this quantity for a distribution by editing the appropriate
+{\tt nplotter} routine.  This is achieved by filling a histogram with the weight corresponding
+to the LO result, another with the weight for the NLO weak result and then an additional placeholder
+histogram that contains the special string {\tt '+RELEW+'}.  Examples of the syntax and correct calling
+sequence can be seen in the code.
+
+
+\subsection{Nuclear collisions}
+\label{sec:nucleus}
+
+It is possible to specify nuclear collisions by choosing values
+of {\tt ih1} and/or {\tt ih2} above {\tt 1000d0}. In that case,
+the identity of the nucleus is specified by the atomic number
+and mass ($Z$ and $A$ respectively) as follows:
+\begin{equation}
+{\tt ih} = 1000Z+A.
+\end{equation}
+For example, to choose an incoming lead beam one would set
+{\tt ih1=+82207d0}, corresponding to $Z=82$ and $A=207$.
+When running the program, the value of {\tt sqrts} should also be
+changed. This must be done by hand and is not automatically taken
+care of by the
+program. The centre-of-mass energy is decreased by a factor of
+$\sqrt{Z/A}$ for each nuclear beam. 
+
+The nucleon \PDF{}s are calculated by applying the correction
+factors of EKS98~\cite{Eskola:1998df} on top of the \PDF{} set that is selected.
+This construction simply corrects each parton distribution by
+a factor that depends on the value of $(x,\mu)$ in the event.
+This parametrization is limited to the region $\mu < 100$~GeV and
+any value above that threshold will instead default to $100$~GeV.
+
+Note that the cross-section reported by the program at the end
+of the run is given per nucleon per beam. Therefore the
+appropriate factors of $A$ should be applied in order to obtain
+the total cross section.
+
+
+\subsection{Run-time input file configuration}
+
+\MCFM{} execution is performed in the {\tt Bin/} directory,
+with syntax:
+\begin{center}
+	{\tt mcfm\_omp }{\it input.ini}
+\end{center}
+If no command line options are given, then \MCFM{} will default
+to using the file {\tt input.ini} in the current directory for
+choosing options. The \texttt{input.ini} file can be in any directory and
+then the first argument to \texttt{mcfm\_omp} should be the location
+of the file. Furthermore, one can overwrite or append single
+configuration options with additional parameters like 
+\texttt{./mcfm\_omp benchmark/input.ini -general\%part=nlo -lhapdf\%dopdferrors=.true.}.
+Here specifying a parameter uses a single dash, then the section name as in the configuration file, followed
+by a percent sign, followed by the option name, followed by an equal sign and the actual value of the setting.
+
+All default settings in the input file are explained below, as well as further optional parameters.
+The top level setting \texttt{mcfm\_version} specifies the input file version number and it must  match the version of 
+the code being used.
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{general}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{nproc} & 
+		The process to be studied is given by
+		choosing a process number, according to Table~\ref{nproctable}
+		in Appendix~\ref{MCFMprocs}.
+		$f(p_i)$ denotes a generic partonic jet. Processes denoted as
+		``LO'' may only be calculated in the Born approximation. For photon
+		processes, ``NLO+F'' signifies that the calculation may be performed
+		both at NLO and also including the effects of photon fragmentation
+		and experimental isolation. In contrast, ``NLO'' for a process involving
+		photons means that no fragmentation contributions are included and isolation
+		is performed according to the procedure of Frixione~\cite{Frixione:1998jh}.	\\
+		\texttt{part} &
+		This parameter has 5 possible values, described below:
+		\begin{itemize}
+			\item {\tt lo} (or {\tt lord}).
+			The calculation is performed at leading order only.
+			\item {\tt virt}.
+			Virtual (loop) contributions to the next-to-leading order result are
+			calculated (+counterterms to make them finite), including also the
+			lowest order contribution.
+			\item {\tt real}.
+			In addition to the loop diagrams calculated by {\tt virt}, the full
+			next-to-leading order results must include contributions from diagrams
+			involving real gluon emission (-counterterms to make them finite).
+			Note that only the sum of the {\tt real} and the {\tt virt} contributions
+			is physical.
+			\item {\tt nlo} (or {\tt tota}).
+			For simplicity, the {\tt nlo} option simply runs the {\tt virt} and
+			{\tt real} real pieces in series before performing a sum to obtain
+			the full next-to-leading order result. For photon processes that include fragmentation,
+			{\tt nlo} also includes the calculation of the fragmentation ({\tt frag})
+			contributions.
+			\item {\tt nlocoeff}.
+			This computes only the contribution of the NLO coefficient;  it is equivalent
+			to running {\tt nlo} and then subtracting the result of {\tt lo}.
+			\item {\tt nlodk} (or {\tt todk}).
+			Processes 114, 161, 166, 171, 176, 181, 186, 141, 146, 149, 233, 238, 501, 511 only, see 
+			sections~\ref{subsec:stop} and
+			\ref{subsec:wt} below.
+			\item {\tt frag}.
+			Processes 280, 285, 290, 295, 300-302, 305-307,  820-823 only, see sections~\ref{subsec:gamgam}, 
+			\ref{subsec:wgamma} and
+			\ref{subsec:zgamma} below.
+			\item {\tt nnlo} (and {\tt nnlocoeff}).
+			The computation of the NNLO prediction (or the NNLO coefficient in the
+			expansion) is described separately below.
+		\end{itemize} \\
+		\texttt{runstring} &
+		When \MCFM{} is run, it will write output to several files. The
+		label {\tt runstring} will be included in the names of these files.
+		\\
+		\texttt{sqrts} & Center of mass energy in GeV. \\
+		\texttt{ih1}, \texttt{ih2} &
+		The identities of the incoming hadrons
+		may be set with these parameters, allowing simulations for both
+		$p{\bar p}$ (such as the Tevatron) and $pp$ (such as the LHC). 
+		Setting {\tt ih1} equal to ${\tt +1}$ corresponds to
+		a proton, whilst ${\tt -1}$ corresponds to an anti-proton.
+		Values greater than {\tt 1000d0} represent a nuclear collision,
+		as described in Section~\ref{sec:nucleus}. \\
+		\texttt{zerowidth} &
+		When set to {\tt .true.} then all vector
+		bosons are produced on-shell. This is appropriate for calculations
+		of {\it total} cross-sections (such as when using {\tt removebr} equal
+		to {\tt .true.}, below). When interested in decay products of the
+		bosons this should be set to {\tt .false.}. \\
+		\texttt{removebr} &
+		When set to {\tt .true.} the branching ratios are 
+		removed for unstable particles such as vector bosons or top quarks. See the
+		process notes in Section~\ref{sec:specific} below for further details. \\
+		\texttt{ewcorr} & 
+		Specifies whether or not to compute EW corrections
+		for the process.  Default is {\tt none}.  May be set to {\tt exact}
+		or {\tt sudakov} for processes {\tt 31} (neutral-current DY),
+		{\tt 157} (top-pair production) and {\tt 190} (di-jet production).
+		For more details see section~\ref{subsec:EW}.		\\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{nnlo}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{taucut} & 
+		Optional. This sets the value of the jettiness variable
+		$\tau_\text{cut}$, as multiplied by the invariant mass of the Born system,
+		that separates the resolved and unresolved regions in \NNLO{}
+		calculations that use zero-jettiness. The default value results
+		in total inclusive cross sections with less than $1\%$ residual cutoff effects, see \cref{sec:NNLO}. \\
+		\texttt{tcutarray} &
+		Optional. Array that specifies multiple taucut values that should be sampled
+		on the fly in addition to the nominal taucut value. Both larger and smaller
+		values than the nominal one can be specified, although uncertainties for
+		smaller values will be large. We generally do not recommend smaller values
+		than the nominal one chosen with \texttt{taucut}. Default values are chosen
+		to be $2,4,8,20,40$ times the nominal choice of \texttt{taucut}.  \\
+		\texttt{dynamictau} &
+		Optional. If \texttt{.false.}, the \texttt{taucut} value specified
+		is not multiplied by the invariant mass of the Born system. Default is \texttt{.true.}. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{pdf}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{pdlabel} &
+		This specifies the parton distributions used in case the code has been built with
+		\texttt{PDFROUTINES = NATIVE}. The choice of parton distribution is made by
+		inserting the appropriate 7-character code from the table in \cref{subsec:pdfsets}
+		or in \cref{olderPDFs} for historical \PDF{} sets.
+		As mentioned above, this also sets the value of $\alpha_S(M_Z)$.\\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{lhapdf}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{lhapdfset} &
+		Specifies the parton distributions used in case the code has been built with
+		\texttt{PDFROUTINES = LHAPDF}. For a default global installation the PDFs reside
+		in \texttt{/usr/share/LHAPDF/} or \texttt{/usr/local/share/LHAPDF}, and the name
+		equals the set name from \url{https://lhapdf.hepforge.org/pdfsets.html}, which is
+		also the directory name of the sets. Multiple PDF sets separated by a space can be specified. \\
+		\texttt{lhapdfmember} & Specifies the individual members of the parton distribution sets.
+		A value of zero corresponds to the central value for Hessian sets. In case multiple sets
+		have been specifies above, each one needs a member number separated by space. \\
+		\texttt{dopdferrors} & When this is set to \texttt{.true.} PDF uncertainties are calculated
+		for every specified \PDF{} set according to the routines provided by \LHAPDF{}.
+		The \texttt{lhapdfmember} numbers are ignored but must still be set for each member. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{scales}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{renscale} &
+		This parameter may be used to adjust the value
+		of the {\it renormalization} scale. This is the scale
+		at which $\alpha_S$ is evaluated and will typically be set to
+		a mass scale appropriate to the process ($M_W$, $M_Z$, $M_t$ for
+		instance). \\
+		\texttt{facscale} &
+		This parameter may be used to adjust the value
+		of the {\it factorization} scale and will typically be set to
+		a mass scale appropriate to the process ($M_W$, $M_Z$, $M_t$ for
+		instance). \\
+		\texttt{dynamicscale} &
+		This character string is used to specify whether
+		the renormalization, factorization and fragmentation scales are dynamic, i.e. recalculated
+		on an event-by-event basis. If this string is set to `{\tt none}' then the scales
+		are fixed for all events at the values	specified by {\tt renscale}, {\tt facscale}
+		as well as \texttt{fragmentation\_scale} as defined further below.
+		
+		The type of dynamic scale to be used is selected by using a particular string
+		for the variable {\tt dynamicscale}, as indicated in \cref{tab:dynamicscales} on \cpageref{tab:dynamicscales}.
+		Not all scales are defined for each process, with program execution halted if
+		an invalid selection is made in the input file.
+		The selection chooses a reference scale, $\mu_0$. The actual scales used in
+		the code are then,
+		\begin{equation}
+		\mu_{\rm ren} = {\tt scale} \times \mu_0 \;, \qquad
+		\mu_{\rm fac} = {\tt facscale} \times \mu_0
+		\label{eq:dynscale}
+		\end{equation}
+		Note that, for simplicity, the fragmentation scale (relevant only for processes
+		involving photons) is set equal to the renormalization scale.
+		In some cases it is possible for the dynamic scale to become very large. This can cause problems 
+		with the interpolation of data tables for the PDFs and fragmentation functions. As a result if a dynamic scale 
+		exceeds a maximum of $60$ TeV (PDF) or $990$ GeV (fragmentation) this value is set by default to the maximum. 	
+		\\
+		\texttt{doscalevar} &
+		
+		This additional option can be set to \texttt{.true.} to enable scale variation.
+		It performs a variation of the scales used in \cref{eq:dynscale} by a factor of 
+		two so that it surveys the 
+		additional possibilities,
+		\begin{eqnarray}
+		&&
+		(2\mu_{\rm ren},2\mu_{\rm fac}),
+		(\mu_{\rm ren}/2,\mu_{\rm fac}/2), \nonumber \\ &&
+		(2\mu_{\rm ren},\mu_{\rm fac}),
+		(\mu_{\rm ren}/2,\mu_{\rm fac}),
+		(\mu_{\rm ren},2\mu_{\rm fac}),
+		(\mu_{\rm ren},\mu_{\rm fac}/2) \,.
+		\label{eq:scalevar}
+		\end{eqnarray}
+		The histograms corresponding to these different choices are included in the output file, from which an
+		envelope of theoretical uncertainty may be constructed by the user. \\
+		\texttt{maxscalevar} &
+		Number of additional scale variation points to choose, can be set to two or six. For two
+		it just samples the first two variations as in eq.~\ref{eq:scalevar}. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+\begin{table}
+	\begin{center}
+		\begin{longtable}{|l|l|l|}
+			\hline
+			{\tt dynamic scale} & $\mu_0^2$ & comments\\
+			\hline 
+			{\tt m(34)} & $(p_3+p_4)^2$ & \\
+			{\tt m(345)} & $(p_3+p_4+p_5)^2$ & \\
+			{\tt m(3456)} & $(p_3+p_4+p_5+p_6)^2$ & \\
+			{\tt sqrt(M\pow 2+pt34\pow 2)} & $M^2 + (\vec{p_T}_3 + \vec{p_T}_4)^2$ & $M=$~mass of particle 3+4 \\
+			{\tt sqrt(M\pow 2+pt345\pow 2)} & $M^2 + (\vec{p_T}_3 + \vec{p_T}_4 + \vec{p_T}_5)^2$ & $M=$~mass of 
+			particle 3+4+5 \\
+			{\tt sqrt(M\pow 2+pt5\pow 2)} & $M^2 + \vec{p_T}_5^2$ & $M=$~mass of particle 3+4 \\
+			{\tt sqrt(M\pow 2+ptj1\pow 2)} & $M^2 + \vec{p_T}_{j_1}^2$ & $M=$~mass(3+4), $j_1=$ leading $p_T$ jet \\
+			{\tt pt(photon)} & $\vec{p_T}_\gamma^2$ & \\
+			{\tt pt(j1)} & $\vec{p_T}_{j_1}^2$ & \\
+			{\tt HT} & $\sum_{i=1}^n {p_T}_i$ & $n$ particles (partons, not jets) \\
+			\hline 
+			\hline\end{longtable}
+	\end{center}
+	\caption{Choices of the input parameter {\tt dynamicscale} that result in an event-by-event
+		calculation of all relevant scales using the given reference scale-squared $\mu_0^2$.
+		\label{tab:dynamicscales}}
+\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{masses}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{hmass} & Higgs mass \\
+		\texttt{mt} & Top-quark mass \\
+		\texttt{mb} & Bottom-quark mass \\
+		\texttt{mc} & Charm-quark mass \\
+		\texttt{wmass} & W-boson mass \\
+		\texttt{zmass} & Z-boson mass \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{basicjets}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{inclusive} &
+		This logical parameter chooses whether the
+		calculated cross-section should be inclusive in the number of jets
+		found at \NLO{}. An {\em exclusive}
+		cross-section contains the same number of jets at next-to-leading
+		order as at leading order. An {\em inclusive} cross-section may
+		instead contain an extra jet at \NLO{}. \\
+		\texttt{algorithm} &
+		This specifies the jet-finding algorithm that
+		is used, and can take the values
+		{\tt ktal} (for the Run II $k_T$-algorithm), {\tt ankt} (for the
+		``anti-$k_T$'' algorithm~\cite{Cacciari:2008gp}), {\tt cone} (for
+		a midpoint cone algorithm), {\tt hqrk} (for a simplified cone
+		algorithm designed for heavy quark processes) and {\tt none} (to
+		specify no jet clustering at all). The latter option is only a
+		sensible choice when the leading order cross-section is well-defined
+		without any jet definition: e.g. the single top process,
+		$q{\bar q^\prime} \to t{\bar b}$, which is finite as
+		$p_T({\bar b}) \to 0$. \\
+		\texttt{ptjetmin}, \texttt{etajetmax} &
+		These specify the values
+		of $p_{T,{\rm min}}$ and $|\eta|_{\rm max}$ for the
+		jets that are found by the algorithm.  \\
+		\texttt{etajetmin} &
+		Optional parameter for setting a minimum jet rapidity $|\eta|_{\rm min}$. \\
+		\texttt{Rcutjet} &
+		If the final state of the chosen process contains
+		either quarks or gluons then for each event an attempt will be made
+		to form them into jets. For this it is necessary to define the
+		jet separation $\Delta R=\sqrt{{\Delta \eta}^2 + {\Delta \phi}^2}$
+		so that after jet combination, all jet pairs are separated by
+		$\Delta R >$~{\tt Rcutjet}.\\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{masscuts}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt m34min}, {\tt m34max}, {\tt m56min}, {\tt m56max}, {\tt m3456min}, {\tt m3456max} &
+		These parameters represent a basic set of mass cuts that are be applied
+		to the calculated cross-section. The only events that contribute to
+		the cross-section will have, for example,
+		{\tt m34min} $<$ {\tt m34} $<$ {\tt m34max} where {\tt m34} is the
+		invariant mass of particles 3 and 4 that are specified by {\tt nproc}.
+		{\tt m34min}~$> 0$ is obligatory for processes which can involve a virtual
+		photon, such as {\tt nproc=31}. By default, the maximum settings are set to $\sqrt{s}$.\\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+\clearpage
+
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{cuts}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{makecuts} &
+		If this parameter is set to {\tt .false.} then
+		no additional cuts are applied to the events and the remaining
+		parameters in this section are ignored. Otherwise, events will
+		be rejected according to a set of cuts that is specified below.
+		Further options may be implemented by editing {\tt src/User/gencuts\_user.f90}. \\
+		
+		{\tt ptleptmin, etaleptmax} & These specify the values
+		of $p_{T,{\rm min}}$ and $|\eta|_{\rm max}$ for one of the leptons produced
+		in the process. One can also introduce optional settings \texttt{ptleptmin}
+		and \texttt{etaleptmin}. \\
+		
+		{\tt etaleptveto} & This should be specified as a pair of double
+		precision numbers that indicate a rapidity range that should be excluded
+		for the lepton that passes the above cuts. \\
+		
+		{\tt ptminmiss} & Specifies the minimum missing transverse
+		momentum (coming from neutrinos). \\
+		
+		{\tt ptlept2min}, \texttt{etalept2max} & These specify
+		the values of $p_{T,{\rm min}}$ and $|\eta|_{\rm max}$ for the remaining
+		leptons in the process. This allows for staggered cuts where, for
+		instance, only one lepton is required to be hard and central.
+		One can also introduce optional settings \texttt{ptlept2max} and
+		\texttt{etalept2min}. \\
+		
+		{\tt etalept2veto} & This should be specified as a pair of double
+		precision numbers that indicate a rapidity range that should be excluded
+		for the remaining leptons. \\
+		
+		{\tt m34transmin} & For general processes, this specifies the
+		minimum transverse mass of particles 3 and 4,
+		\begin{equation}
+		\mbox{general}: \quad 2 p_T(3) p_T(4) \left( 1 - \frac{\vec{p_T}(3) \cdot \vec{p_T}(4)}{p_T(3) p_T(4)} \right) 
+		> {\texttt{m34transmin}} 
+		\end{equation}
+		For the $W(\to \ell \nu)\gamma$ process the role of this cut changes, to become
+		instead a cut on the transverse cluster mass of the $(\ell\gamma,\nu)$ system,
+		\begin{eqnarray}
+		W\gamma: && \left[ \sqrt{m_{\ell\gamma}^2 + |\vec{p_T}(\ell)+\vec{p_T}(\gamma)|^2} + p_T(\nu) \right]^2
+		\nonumber \\ &&
+		-|\vec{p_T}(\ell)+\vec{p_T}(\gamma)+\vec{p_T}(\nu)|^2 >  {\texttt{m34transmin}}^2
+		\end{eqnarray}
+		For the $Z\gamma$ process this parameter specifies a simple invariant mass cut,
+		\begin{equation}
+		Z\gamma: \quad m_{Z\gamma} > {\texttt{m34transmin}}
+		\end{equation}
+		A final mode of operation applies to the $W\gamma$ process and is triggered by a negative value
+		of {\texttt{m34transmin}}. This allows simple access to the cut that was employed in v6.0 of the code:
+		\begin{eqnarray}
+		W\gamma, \mbox{obsolete}: &&
+		\left[ p_T(\ell) +  p_T(\gamma) +  p_T(\nu) \right]^2 \nonumber \\ 
+		&-&|\vec{p_T}(\ell)+\vec{p_T}(\gamma)+\vec{p_T}(\nu)|^2 > |{\texttt{m34transmin}}|
+		\end{eqnarray}
+		In each case the screen output indicates the cut that is applied. \\
+		
+		\bottomrule
+	\end{longtable}
+%\end{table}
+\clearpage
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{cuts}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt Rjlmin} & Using the definition of $\Delta R$ above,
+		requires that all jet-lepton pairs are separated by
+		$\Delta R >$~{\tt R(jet,lept)\_min}. \\
+		
+		{\tt Rllmin} & When non-zero, all lepton-lepton pairs
+		must be separated by $\Delta R >$~{\tt R(lept,lept)\_min}. \\
+		
+		{\tt delyjjmin} & This enforces a pseudo-rapidity
+		gap between the two hardest jets $j_1$ and $j_2$, so that:
+		$|\eta^{j_1} - \eta^{j_2}| >$~{\tt Delta\_eta(jet,jet)\_min}. \\
+		
+		{\tt jetsopphem} & If this parameter is set to {\tt .true.},
+		then the two hardest jets are required to lie in opposite hemispheres,
+		$\eta^{j_1} \cdot \eta^{j_2} < 0$. \\
+		
+		{\tt lbjscheme} & This integer parameter provides no
+		additional cuts when it takes the value {\tt 0}. When equal to
+		{\tt 1} or {\tt 2}, leptons are required to lie between the two
+		hardest jets. With the ordering $\eta^{j_-} < \eta^{j_+}$ for the
+		pseudo-rapidities of jets $j_1$ and $j_2$:
+		{\tt lbjscheme = 1} : 
+		$\eta^{j_-} < \eta^{\rm leptons} < \eta^{j_+}$;
+		{\tt lbjscheme = 2} :
+		$\eta^{j_-}+{\tt Rcutjet} < \eta^{\rm leptons} < \eta^{j_+}-{\tt Rcutjet}$. \\
+		
+		{\tt ptbjetmin, etabjetmax} & If a process involving $b$-quarks is being calculated, then these can
+		be used to specify {\em stricter} values of $p_T^{\rm min}$
+		and $|\eta|^{\rm max}$ for $b$-jets. Similarly, values for \texttt{ptbjetmax} and \texttt{etabjetmin} can be 
+		specified. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+
+%\begin{table}[]
+	\begin{longtable}{p{3.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{photon}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt fragmentation} &  This parameter is a logical variable that determines whether the production of photons 
+		by a parton 
+		fragmentation process is included. If {\tt fragmentation} is set to {\tt .true.} the code uses a a standard 
+		cone isolation
+		procedure (that includes LO fragmentation contributions in the NLO calculation).
+		If {\tt fragmentation} is set to {\tt .false.} the code implements
+		a Frixione-style photon cut~\cite{Frixione:1998jh},
+		\begin{eqnarray}
+		\sum_{i \in R_0} E_{T,i}^j  < \epsilon_h E_{T}^{\gamma} \bigg(\frac{1-\cos{R_{i\gamma}}}{1-\cos{R_0}}\bigg)^{n} 
+		\;.
+		\label{frixeq}
+		\end{eqnarray}
+		In this equation, $R_0$, $\epsilon_h$ and $n$ are defined by {\tt cone\_ang}, {\tt epsilon\_h} 
+		and {\tt n\_pow}  respectively (see below).
+		$E_{T,i}^{j}$ is the transverse energy of a parton, $E_{T}^\gamma$ is the
+		transverse energy of the photon and $R_{i\gamma}$ is the separation between the photon and the parton using the 
+		usual definition 
+		$R=\sqrt{\Delta\phi^2+\Delta\eta^2}$. $n$ is an integer parameter which by default is set to~1. \\
+		
+		{\tt fragmentation\_set} & A length eight character variable that is used to choose the particular photon 
+		fragmentation set.
+		Currently implemented fragmentation functions can be called with `{\tt BFGSet\_I}', `{\tt 
+			BFGSetII}'~\cite{Bourhis:1997yu} or `{\tt GdRG\_\_LO}'~\cite{GehrmannDeRidder:1998ba}. \\
+		
+		{\tt fragmentation\_scale} & A double precision variable that will be used to choose the scale 
+		at which the photon fragmentation is evaluated. \\
+		
+		{\tt gammptmin} & This specifies the value
+		of $p_T^{\rm min}$ for the photon with the largest transverse momentum.
+		Note that this cut, together with all the photon cuts specified in this section
+		of the input file, are applied even if {\tt makecuts} is set to {\tt .false.}.
+		One can also add an entry for \texttt{gammptmax} to cut on a range. \\
+		
+		{\tt gammrapmax} & This specifies the value
+		of $|y|^{\rm max}$ for any photons produced in the process. One can also add an entry
+		for \texttt{gammrapmin} to cut on a range. \\
+		
+		{\tt gammpt2} and {\tt gammpt3} & These specify the values
+		of $p_T^{\rm min}$ for the second and third photons, ordered by $p_T$. \\
+		
+		{\tt Rgalmin} & Using the usual definition of $\Delta R$,
+		this requires that all photon-lepton pairs are separated by
+		$\Delta R >$~{\tt Rgalmin}. This parameter must be non-zero
+		for processes in which photon radiation from leptons is included. \\
+		
+		{\tt Rgagamin} & Using the usual definition of $\Delta R$,
+		this requires that all photon pairs are separated by
+		$\Delta R >$~{\tt Rgagamin}. \\
+		
+		{\tt Rgajetmin} & Using the usual definition of $\Delta R$,
+		this requires that all photon-jet pairs are separated by
+		$\Delta R >$~{\tt Rgajetmin}. \\
+		
+		{\tt cone\_ang} & Fixes the cone size ($R_0$) for photon isolation.
+		This cone is used in both forms of isolation. \\
+		
+		{\tt epsilon\_h} & This cut controls the amount of radiation allowed in cone when  {\tt fragmentation} is set 
+		to 
+		{\tt .true.}. If  {\tt epsilon\_h} $ < 1$ then the photon is isolated using
+		$\sum_{\in R_0} E_T{\rm{(had)}} < \epsilon_h \, p^{\gamma}_{T}.$ Otherwise {\tt epsilon\_h}  $ > 1$ sets 
+		$E_T(max)$ in  $\sum_{\in R_0} E_T{\rm{(had)}} < E_T(max)$.  
+		If the user wishes to always use a scaling or fixed isolation cut, independent of the value of {\tt 
+			epsilon\_h}, the routine
+		{\tt src/Cuts/iso.f} may be edited and the value of the variable {\tt imode} changed according to the comments.
+		When {\tt fragmentation} is set to {\tt .false.}, $\epsilon_h$ controls the amount of hadronic energy allowed 
+		inside the cone using the
+		Frixione isolation prescription (see above, Eq.~(\ref{frixeq})). \\
+		
+		{\tt n\_pow} & When using the Frixione isolation prescription, the exponent $n$ in Eq.~(\ref{frixeq}). \\
+		
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{histogram}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{writetop} & Write output histograms suitable as input for top-drawer. \\
+		\texttt{writetxt} & Write output histograms as whitespace-separated columns. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{integration}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{usesobol} & When \texttt{.true.} and the number of \MPI{} processes is a power of two, the Sobol 
+		sequence is used, see ref.~\cite{MCFM9}, otherwise the {\abbrev MT19937} pseudo random number generator. \\
+		\texttt{seed} & Initialization seed for {\abbrev MT19937} pseudo random number generator. \\
+		\texttt{precisiongoal} & Relative precision goal for the integration. \\
+		\texttt{readin} & When \texttt{.true.} the automatically written snapshot from a previous run will be read-in
+		to resume the integration. \\
+		\texttt{writeintermediate} & When \texttt{.true.} histograms are written after each Vegas iteration. \\
+		\texttt{warmupprecisiongoal} & Sets the relative precision goal for the warmup run. Unless this precision
+		is reached, the number of calls for the warmup is increased. \\
+		\texttt{warmupchisqgoal} & Sets the $\chi^2$ per iteration goal for the warmup run. Unless the 
+		$\chi^2/\text{it.}$ of the warmup is below this target, the number of calls for the warmup is increased. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+\clearpage
+
+\subsection{Process specific options}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{singletop}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{c\_phiq} & Sets real Wilson coefficient of $\Qone$ for processes 164 and 169. See \cref{subsec:offstop} 
+		and ref.~\cite{Neumann:2019kvk}. \\
+		\texttt{c\_phiphi} & Sets real and imaginary part of the $\Qtwo$ Wilson coefficient. \\
+		\texttt{c\_tw} & Sets real and imaginary part of the $\Qthree$ Wilson coefficient. \\
+		\texttt{c\_bw} & Sets real and imaginary part of the $\Qfour$ Wilson coefficient. \\
+		\texttt{c\_tg} & Sets real and imaginary part of the $\Qsix$ Wilson coefficient. \\
+		\texttt{c\_bg} & Sets real and imaginary part of the $\Qseven$ Wilson coefficient. \\
+		\texttt{lambda} & Scale $\Lambda$, see \cref{subsec:offstop} and ref.~\cite{Neumann:2019kvk}. \\
+		\texttt{enable\_lambda4} & Enable contributions of order $1/\Lambda^4$ when set to \texttt{.true.}. \\
+		\texttt{disable\_sm} & When set to \texttt{.true.} the pure \SM{} contributions are disabled, and just
+		the \SM{}-\EFT{} interference and \EFT{} contributions are calculated. \\
+		\texttt{mode\_anomcoup} & When set to \texttt{.true.} at \LO{} one can reproduce results obtained
+			without power counting as in the anomalous couplings approach, see \cref{subsec:offstop} and 
+			ref.~\cite{Neumann:2019kvk}. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{anom\_wz}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt enable} &  Boolean flag to enable anomalous W-boson and Z-boson coupling contributions for certain 
+		processes. 	False has the same effect as setting all anomalous couplings to zero, but additionally skips 
+		computation of anomalous coupling code parts. \\
+		 & \\
+		{\tt delg1\_z} & $\Delta g_1^Z$ {\it See section~\ref{subsec:diboson}.} \\
+		{\tt delk\_z} & $\Delta\kappa^Z$ {\it See section~\ref{subsec:diboson}.} \\
+		{\tt delk\_g} & $\Delta\kappa^\gamma$ {\it See sections~\ref{subsec:diboson} and~\ref{subsec:wgamma}.} \\
+		{\tt lambda\_z} & $\Lambda^Z$ {\it See section~\ref{subsec:diboson}.} \\
+		{\tt lambda\_g} & $\Lambda^\gamma$ {\it See sections~\ref{subsec:diboson} and~\ref{subsec:wgamma}.} \\
+		 & \\
+		{\tt h1Z} & $h_1^Z$ {\it Anomalous couplings for $Z\gamma$ process at \NNLO{}. See 
+		section~\ref{subsec:zgamma}.} \\
+		{\tt h1gam} & $h_1^\gamma$ {\it See section~\ref{subsec:zgamma}.} \\
+		{\tt h2Z} & $h_2^Z$ {\it See section~\ref{subsec:zgamma}.} \\
+		{\tt h2gam} & $h_2^\gamma$ {\it See section~\ref{subsec:zgamma}.} \\
+		{\tt h3Z} & $h_3^Z$ {\it See section~\ref{subsec:zgamma}.} \\
+		{\tt h3gam} & $h_3^\gamma$ {\it See section~\ref{subsec:zgamma}.} \\
+		{\tt h4Z} & $h_4^Z$ {\it See section~\ref{subsec:zgamma}.} \\
+		{\tt h4gam} & $h_4^\gamma$ {\it See section~\ref{subsec:zgamma}.} \\
+		 & \\
+		{\tt tevscale} & Form-factor scale, in TeV {\it See section~\ref{subsec:diboson}.} 
+		No form-factors are applied to the anomalous couplings if this value is negative. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+\clearpage
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{wz2jet}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		\texttt{Qflag} &
+		This only has an effect when running a
+		$W+2$~jets or $Z+2$~jets process. Please see section~\ref{subsec:w2jets}
+		below. \\
+		\texttt{Gflag} &
+		This only has an effect when running a
+		$W+2$~jets or $Z+2$~jets process. Please see section~\ref{subsec:w2jets}
+		below. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{hjetmass}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt mtex} &
+		Sets the order $k=0,2,4$ of the $1/m_t^k$ expansion for virtual corrections in the $H+$jet process 200. See 
+		section \ref{subsec:hjetma}. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{anom\_higgs}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt hwidth\_ratio} & For processes {\tt 123}--{\tt 126}, {\tt 128}--{\tt 133} only,
+		this variable provides a rescaling of the width of the Higgs boson.  Couplings are rescaled such that the
+		corresponding cross section close to the Higgs boson peak is unchanged.  Further details of this procedure are 
+		given in
+		{\tt arXiv:1311.3589}. \\
+		\texttt{cttH, cWWH} & See {\tt arXiv:1311.3589}. \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{extra}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt debug} &
+		A logical variable which can be used during a 
+		debugging phase to mandate special behaviours. 
+		Passed by common block {\tt common/debug/debug}. \\
+		
+		{\tt verbose} &
+		A logical variable which can be used during a debugging phase to write 
+		special information. Passed in common block {\tt common/verbose/verbose}. \\
+		
+		{\tt new\_pspace} &
+		A logical variable which can be used during a debugging phase to test alternative versions of the phase space.
+		Passed in common block {\tt common/new\_pspace/new\_pspace}. \\
+		
+		{\tt spira} & 
+		A  variable. If {\tt spira} is true, we calculate the 
+		width of the Higgs boson by interpolating from a table
+		calculated using the NLO code of M. Spira.	Otherwise the LO value valid for low Higgs masses only is used. \\
+		
+		{\tt noglue} &
+		A logical variable. 
+		The default value is false. If set to true, no processes
+		involving initial gluons are included. \\
+		{\tt ggonly} &
+		A logical variable. 
+		The default value is false. If set to true, 
+		only the processes
+		involving initial gluons in both hadrons are included.\\
+		{\tt gqonly} &
+		The default value is false. If set to true, 
+		only the processes
+		involving an initial gluon in one hadron and an initial quark
+		or antiquark in the other hadron (or vice versa) are included.\\
+		{\tt omitgg} &
+		A logical variable. 
+		The default value is false. If set to true, the gluon-gluon
+		initial state is not included.\\
+		
+		{\tt clustering} &
+		This logical parameter determines whether clustering is performed to yield
+		jets. Only during a debugging phase should this variable be set to false. \\
+		
+		{\tt colourchoice} &
+		If colourchoice=0, all colour structure are included ($W,Z+2$~jets).
+		If colourchoice=1, only the leading 
+		colour structure is included ($W,Z+2$~jets). \\
+		
+		{\tt rtsmin} &
+		A minimum value of $\sqrt{s_{12}}$, which ensures that the invariant mass
+		of the incoming partons can never be less than {\tt rtsmin}. \\
+		
+		
+		{\tt cutoff} & Cutoff according to \texttt{src/Need/smallnew.f} and
+		\texttt{src/Need/smalltau.f} \\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+%\begin{table}[]
+	\begin{longtable}{p{1.5cm}p{12cm}}
+		\toprule
+		\multicolumn{1}{c}{{\textbf{Section} \texttt{dipoles}}} & \multicolumn{1}{c}{{\textbf{Description}}} \\ 
+		\midrule
+		{\tt aii} &
+		A double precision variable which can be used to
+		limit the kinematic range for the subtraction of initial-initial dipoles
+		as suggested by Trocsanyi and Nagy~\cite{Nagy:2003tz}.   
+		The value {\tt aii=1} corresponds 
+		to standard Catani-Seymour subtraction.\\
+		{\tt aif} &
+		A double precision variable which can be used to
+		limit the kinematic range for the subtraction of initial-final dipoles
+		as suggested by Trocsanyi and Nagy~\cite{Nagy:2003tz}.   
+		The value {\tt afi=1} corresponds 
+		to standard Catani-Seymour subtraction.\\
+		{\tt afi} &
+		A double precision variable which can be used to
+		limit the kinematic range for the subtraction of final-initial dipoles
+		as suggested by Trocsanyi and Nagy~\cite{Nagy:2003tz}.   
+		The value {\tt afi=1} corresponds 
+		to standard Catani-Seymour subtraction.\\
+		{\tt aff} &
+		A double precision variable which can be used to
+		limit the kinematic range for the subtraction of final-final dipoles
+		as suggested by Trocsanyi and Nagy~\cite{Nagy:2003tz}.   
+		The value {\tt aff=1} corresponds 
+		to standard Catani-Seymour subtraction.\\
+		{\tt bfi} &
+		A double precision variable which can be used to
+		limit the kinematic range for the subtraction of final-initial dipoles
+		in the photon fragmentation case.\\
+		{\tt bff} &
+		A double precision variable which can be used to
+		limit the kinematic range for the subtraction of final-final dipoles
+		in the photon fragmentation case.\\
+		\bottomrule
+	\end{longtable}
+%\end{table}
+
+\subsection{User modifications to the code}
+
+
+Modifying the plotting routines in the files \texttt{src/User/nplotter*.f} allows for modification of the pre-defined 
+histograms and addition of any number of arbitrary observables. The routine \texttt{gencuts\_user} can be adjusted  in 
+the file
+\texttt{src/User/gencuts\_user.f90} for additional cuts after the jet algorithm has performed the 
+clustering. In the same file the routine \texttt{reweight\_user} can be modified to include a manual re-weighting
+for all integral contributions. This can be used to obtain improved uncertainties in, for example, tails of 
+distributions.
+One example is included in the subdirectory \texttt{examples}, where the \texttt{reweight\_user} function approximately
+flattens the Higgs transverse momentum distribution, leading to equal relative uncertainties even in the tail at 
+\SI{1}{TeV}.
+
+\label{user}
+\begin{itemize}
+	\item {\tt subroutine nplotter\_user(pjet, wt,wt2, nd)}
+	This subroutine is called to allow the user to bin their own       
+	histograms. Variables passed to this routine:
+	
+	\begin{itemize}
+		\item        p:  4-momenta of incoming partons(i=1,2), outgoing leptons 
+		and                                                             
+		jets in the format p(i,4) with the particles 
+		numbered                                                                  
+		according to the input file and components labelled 
+		by                                                                 
+		(px,py,pz,E).  
+		
+		
+		\item        wt:  weight of this 
+		event                                                                                                   
+		
+		
+		\item       wt2:  weight$^2$ of this 
+		event                                                                                                 
+		
+		
+		\item        nd:  an integer specifying the dipole number of this 
+		contribution                                                           
+		(if applicable), otherwise equal to zero.
+	\end{itemize}
+	
+\end{itemize}

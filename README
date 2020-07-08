@@ -1,0 +1,47 @@
+
+
+08.07.2020
+
+This branch is created in order to develop the patch for MCFM-9.0 as well as for mcfm-bridge (version 0.0.35 is used).
+
+Patches for MCFM-9.0 are given with separate packages mcfm-patch-0.0.901 and mcfm-patch-0.0.902.
+mcfm-bridge patch is bridge-patch-0.0.35.90.
+
+IMPORTANT: Due to omp methods in MCFM-9.0, the bridge is modified with '#pragma omp threadprivate' however this does not allow to perform paralleling.
+For that reason in order to produce grids fist switch to only one thread with:
+  $ export OMP_NUM_THREADS=1
+
+Instruction on how to use patches with official MCFM-9.0 and mcfm-bridge-0.0.35:
+0. The packages were tested using gcc-7.1.0.
+1. One should have the defatul content listed below.
+2. Untar hoppet, LHAPDF, applgrid, MCFM and mcfm-bridge.
+3. Build hoppet, LHAPDF and applgrid.
+4. Patch MCFM-9.0 with mcfm-patch-0.0.901 (untar the patch in MCFM dir) and build with ./Install && make.
+5. Patch bridge with bridge-patch-0.0.35.90 (untar the patch in bridge dir) and install.
+6. Patch MCFM-9.0 with mcfm-patch-0.0.902 (untar the patch in MCFM dir) and do:
+   - execute ./cleaner.sh;
+   - go to src/User/gridwrap.cpp and change smth (like add comment or smth) // this part has some problem with linkage and the makefile doesn't track changes in the bridge.
+   - do make in MCFM-9.0
+7. in order to produce grids use command:
+   $ ./mcfm_omp -histogram%grid=true input.ini (see more details in the code, src/User/parseinput.f, the documentation on the method used there can be found in https://github.com/jannisteunissen/config_fortran)
+
+IMPORTANT TO NOTE:
+1. For now this version is only in LO;
+2. Default settings in input.ini file use dynamic mur muf scale estimation.
+3. Current applgrid version contains print of grids(?) per subprocess, this might confuse a bit.
+4. Don't forget to use $ export OMP_NUM_THREADS=1  
+5. Don't forget to download the PDF set, the default one for input.ini is CT14NNLO (http://lhapdfsets.web.cern.ch/lhapdfsets/current/CT14nnlo.tar.gz).
+
+
+Default content:
+applgrid-1.5.40
+hoppet-1.2.0
+LHAPDF-6.2.3
+MCFM-9.0
+mcfm-bridge-0.0.35
+bridge-patch-0.0.35.90
+mcfm-patch-0.0.901
+mcfm-patch-0.0.902
+
+
+

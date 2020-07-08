@@ -1,0 +1,80 @@
+!  Copyright (C) 2019, respective authors of MCFM.
+!
+!  This program is free software: you can redistribute it and/or modify it under
+!  the terms of the GNU General Public License as published by the Free Software
+!  Foundation, either version 3 of the License, or (at your option) any later
+!  version.
+!
+!  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+!  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+!  PARTICULAR PURPOSE. See the GNU General Public License for more details.
+!
+!  You should have received a copy of the GNU General Public License along with
+!  this program. If not, see <http://www.gnu.org/licenses/>
+ 
+
+      complex*32 function hjetmass_triangle_pmpm_s14_s134_0_rat
+     &     (i1,i2,i3,i4,za,zb)
+          implicit complex*32 (t)
+          integer i1,i2,i3,i4
+          include 'types.f'
+          include 'mxpart.f'
+          include 'constants.f'
+          complex*32 za(mxpart,mxpart), zb(mxpart,mxpart)
+          
+          complex*32 ret
+          real*16 cg
+
+      t1 = za(i2, i4)
+      t2 = zb(i3, i2)
+      t3 = za(i2, i3)
+      t4 = zb(i3, i1)
+      t5 = zb(i4, i1)
+      t6 = t1 * t5 + t3 * t4
+      t7 = za(i1, i2)
+      t8 = zb(i4, i2)
+      t9 = t3 * t2
+      t10 = t1 * t8
+      t11 = t9 + t10
+      if ( real(t11) > 0q0) then; cg = 1q0; else; cg = -1q0; end if
+      t9 = cg * sqrt(t11 ** 2) + t10 + t9
+      t11 = za(i3, i4)
+      t12 = zb(i2, i1)
+      t13 = zb(i4, i3)
+      t14 = t4 * za(i1, i3) + t5 * za(i1, i4)
+      t15 = t7 * t11 * t12 * t13
+      t16 = -t9 * t14 / 2 + t15
+      t17 = -t9 / 2
+      t18 = t3 * t12 * t13
+      t19 = t11 * (t17 * t5 - t18)
+      t20 = t1 * t12
+      t21 = t20 * t13
+      t17 = t11 * (t17 * t4 + t21)
+      t9 = 0.1q1 / t9
+      t21 = t11 * (2 * t21 * t9 - t4)
+      t14 = -2 * t15 * t9 + t14
+      t5 = t11 * (2 * t18 * t9 + t5)
+      t8 = (t12 * t14 - t2 * t5 - t21 * t8) * t7
+      t8 = 0.1q1 / t8
+      t5 = 0.1q1 / t5
+      t15 = t6 ** 2
+      t18 = 0.1q1 / t19
+      t22 = 0.1q1 / t7
+      t14 = 0.1q1 / t14
+      t23 = 0.1q1 / t12
+      t16 = 0.1q1 / t16
+      t24 = 0.1q1 / t11
+      t25 = 0.1q1 / t13
+      t19 = -0.1q1 / t19
+      ret = -64 * t20 * t5 * t9 ** 2 * t8 * t15 * t2 * (t3 * t21 * (t7 *
+     # t2 * t8 - t5) + t1) - 16 * t6 * (t1 * t4 * t21 * t24 * t25 * t5 *
+     # (t22 * t23 * t14 - t8) + (-t17 ** 2 * t23 * t24 * t25 * t19 * t16
+     # ** 2 + t22 * t1 * (t18 * (-t3 * t17 * t18 - t1) + t17 * t23 * t24
+     # * t25 * t19) * t16) * t6 * t2) - 32 * t5 * t9 * t25 * t24 * t8 * 
+     #t21 * t15 * t2 * (t7 ** 2 * t12 * t21 * t8 + t1 - t20 * t7 * t11 *
+     # t13 * (-2 * t10 * t9 + 1) * t8)
+
+      hjetmass_triangle_pmpm_s14_s134_0_rat = ret/32q0/(0,1q0)
+      return
+
+      end function
