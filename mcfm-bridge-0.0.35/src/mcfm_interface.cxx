@@ -60,23 +60,20 @@ static const int mxpart = 14;    // mcfm parameter : max number of partons in ev
 /// was 12 for mcfm 6.7
 /// static const int mxpart = 12;    // mcfm parameter : max number of partons in event record. defined in Inc/constants.f
 
-static const int _Ngrids = 6;
-static       int  Ngrids = 6;
+static const int _Ngrids = 4;
+static       int  Ngrids = 4;
 appl::mcfm_grid* mygrid[_Ngrids];
 
 static const char* gridFiles[_Ngrids] = {
     "_eta3.root",
-    "_pt3-etalt137.root",
-    //    "_eta4.root",
-    "_pt3-eta152-237.root",
+    "_eta4.root",
+    "_pt3.root",
     "_pt4.root",
-    "_eta5.root",
-    "_pt5.root"
 };
 
 
-static double Observable[_Ngrids] = {  0,  0,  0,  0,  0,  0 };   // observable array
-int             nObsBins[_Ngrids] = { 40, 45, 40, 45, 40, 45 }; // eta4, pt4 cental eta-bin, pt4 forward eta-bin
+static double Observable[_Ngrids] = {  0,  0,  0,  0 };   // observable array
+int             nObsBins[_Ngrids] = { 40, 40, 49, 49 }; // eta4, pt4 cental eta-bin, pt4 forward eta-bin
 
 static const double eta[41] =  {
   -4.0, -3.8, -3.6, -3.4, -3.2, 
@@ -96,17 +93,18 @@ static const double eta[41] =  {
 // };
 
 
-static const double pt[46] =  { 
-      0.0,   5.0,   10.0,   15.0,   20.0, 
-     25.0,  30.0,   35.0,   40.0,   45.0, 
-     50.0,  55.0,   60.0,   65.0,   70.0, 
-     75.0,  80.0,   85.0,   90.0,   95.0, 
-    100.0, 105.0,  110.0,  115.0,  120.0, 
-    125.0, 130.0,  135.0,  140.0,  145.0,
-    150.0, 175.0,  200.0,  225.0,  250.0,
-    275.0, 300.0,  350.0,  400.0,  450.0,
-    500.0, 750.0, 1000.0, 1500.0, 2000.0,
-    2500.0
+static const double pt[50] =  { 
+         2.0,  4.0,  6.0,  8.0, 
+        10.0, 12.0, 14.0, 16.0, 18.0, 
+        20.0, 22.0, 24.0, 26.0, 28.0, 
+        30.0, 32.0, 34.0, 36.0, 38.0, 
+        40.0, 42.0, 44.0, 46.0, 48.0, 
+        50.0, 52.0, 54.0, 56.0, 58.0, 
+        60.0, 62.0, 64.0, 66.0, 68.0, 
+        70.0, 72.0, 74.0, 76.0, 78.0, 
+        80.0, 82.0, 84.0, 86.0, 88.0, 
+        90.0, 92.0, 94.0, 96.0, 98.0,
+        100.0 
 };
 
 
@@ -153,12 +151,12 @@ void book_grid()  // inital grid booking
   int nloops = 1;
   
   // number of observables and binning for observables  
-  const double *obsBins[_Ngrids] = { eta, pt, eta, pt, eta, pt };
+  const double *obsBins[_Ngrids] = { eta,  eta, pt, pt };
     
   std::string pdf_function;
 
   glabel = "grid-40-6-15-3";
-
+/*
   const char* basename = std::getenv("appl_basename");
   if ( basename && std::string(basename)!="" ) glabel = basename;
 
@@ -170,18 +168,18 @@ void book_grid()  // inital grid booking
 
   const char* q2order = std::getenv("appl_q2order");
   if ( q2order && std::string(q2order)!="" ) qorder = std::atoi(q2order);
-  
 
   std::cout << "q2low " << q2lower << "\tq2up " << q2upper << std::endl;
-
-  std::cout << "Process : " << nproc_.nproc << std::endl;
+*/
+  std::cout << "Process ::  " << nproc_.nproc << std::endl;
 
   if      ( nproc_.nproc == 1 )  
     {
       std::cout << " W+ production"; 
       pdf_function = "mcfmwp.config"; 
+      //pdf_function="basic"; 
       glabel+="-Wplus";
-      q2Low   = 6399.99, q2Up = 6400.01;
+      q2Low   = 6399.0, q2Up = 6450.01;
       nQ2bins = 3;
       qorder  = 1;
     }  
@@ -463,7 +461,6 @@ void fill_grid( const double evt[][mxpart] )
   
   for(int igrid = 0; igrid < Ngrids; igrid++)
     if(cuts(igrid)){
- 
       mygrid[igrid]->fillMCFM( Observable[igrid] );
     }
 
@@ -496,9 +493,11 @@ void write_grid(double& xstotal)   // writes out grid after some events
 
       std::system("sleep 1");
       
+      //std::cout << "iterat_.ncall2 = " << iterat_.ncall2 << std::endl;
+      //std::cout << "iterat_.itmx2 " << iterat_.itmx2 << std::endl;
 
       mygrid[igrid]->setNormalised( false );
-      mygrid[igrid]->run() = (iterat_.ncall2)*(iterat_.itmx2);
+      //mygrid[igrid]->run() = (iterat_.ncall2)*(iterat_.itmx2);
       
       mygrid[igrid]->untrim();
       int untrim_size = mygrid[igrid]->size();
@@ -507,7 +506,7 @@ void write_grid(double& xstotal)   // writes out grid after some events
       int trim_size = mygrid[igrid]->size();
 
       /// scale up by number of weights
-      (*mygrid[igrid]) *= mygrid[igrid]->run();
+      //(*mygrid[igrid]) *= mygrid[igrid]->run();
       
       // normalise the reference histogram by bin width
       Normalise( mygrid[igrid]->getReference() );
@@ -669,8 +668,8 @@ void getObservable(const double evt[][mxpart])
   }
   else {
     Observable[ 0 ] = rapidity3;
-    Observable[ 1 ] = pt3;
-    Observable[ 2 ] = rapidity4;
+    Observable[ 1 ] = rapidity4;
+    Observable[ 2 ] = pt3;
   }
   
   Observable[ 3 ] = pt4;
@@ -685,24 +684,16 @@ int cuts(int igrid)
   switch(igrid)
     {
     case(0):
-      if ( (nproc_.nproc >= 280) && (nproc_.nproc <= 286) ) { 
-	if ( Observable[1]>100 ) fill = 1;
-      }
-      else fill = 1;
+      fill = 1;
       break;
     case(1):
-      if ( (nproc_.nproc >= 280) && (nproc_.nproc <= 286) ) { 
-	if ( std::fabs(Observable[0])<1.37 ) fill = 1;
-      }
-      else fill = 1;
+      fill = 1;
       break;
     case(2):
-      if ( (nproc_.nproc >= 280) && (nproc_.nproc <= 286) ) { 
-	if ( std::fabs(Observable[0])>=1.52 && std::fabs(Observable[0])<2.37 ) fill = 1;
-      }
-      else fill = 1;
+      fill = 1;
       break;
     case(3):
+      fill = 1;
       break;
     case(4):
       fill = 1;
@@ -722,10 +713,10 @@ int cuts(int igrid)
 // namespace mcfm_bridge;
 
 /// function pointer hooks - set to 0 when no functions defined and applgrid not linked
+
 extern void (*book_gridptr)();                         
 extern void (*fill_gridptr)(const double evt[][mxpart] );
 extern void (*write_gridptr)(double& );   
-
 
 extern "C" bool setup_mcfmbridge() { 
   std::cout << "setup_mcfmbridge()" << std::endl;

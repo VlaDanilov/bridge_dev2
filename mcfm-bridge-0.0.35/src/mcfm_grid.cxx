@@ -14,6 +14,7 @@
 #include "mcfm_grid.h"
 #include "appl_grid/lumi_pdf.h"
 
+
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -24,7 +25,7 @@ static const bool _debug_ = false;
 
 void appl::mcfm_grid::fillMCFM(double obs)
 {
-  //  bool _debug_ = true;
+  //bool _debug_ = true;
 
   if (_debug_) std::cout << __PRETTY_FUNCTION__ << "   --------------------------------------------- " << std::endl;
   
@@ -47,6 +48,8 @@ void appl::mcfm_grid::fillMCFM(double obs)
 	       <<" x2 = "<< _x2
 	       <<" Q  = "<< gridevent_.ag_scale
 	       <<" CON = "<< gridevent_.contrib
+               <<" weightLO = "<< *weightLO
+               <<" obs = "<<obs 
 	       <<std::endl;
   
 
@@ -98,6 +101,8 @@ void appl::mcfm_grid::fillMCFM(double obs)
   }
 
   //  double binWidth = deltaobs(obsbin(obs));
+  //std::cout << " obs = " << obs <<std::endl;
+  //std::cout << "gridevent_.refw  = " << gridevent_.refwt << std::endl;
   getReference()->Fill( obs, gridevent_.refwt );
 
   if (false)

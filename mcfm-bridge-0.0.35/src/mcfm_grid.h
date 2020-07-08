@@ -12,10 +12,12 @@
 #ifndef __MCFM_GRID_H
 #define __MCFM_GRID_H
 
+#define _Thread_local thread_local
+
 #include <iostream>
-
+#include <thread>
 #include "appl_grid/appl_grid.h"
-
+#include <errno.h>
 
 
 
@@ -85,6 +87,9 @@ extern "C" __nflav__  nflav_;
 extern "C" __energy__ energy_;
 extern "C" __iterat__ iterat_;
 
+#pragma omp threadprivate(gridevent_)
+#pragma omp threadprivate(nflav_)
+#pragma omp threadprivate(gridweight_)
 
 
 namespace appl { 

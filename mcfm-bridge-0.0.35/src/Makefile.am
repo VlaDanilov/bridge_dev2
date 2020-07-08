@@ -53,7 +53,7 @@ libmcfmbridge_a_SOURCES = mcfm_interface.cxx mcfm_grid.cxx mcfm_grid.h LHAPDF.h
 
 
 
-AM_CXXFLAGS = -O2 -Wall -fPIC  -I. -I.. -I$(srcdir)  $(ROOTCFLAGS) $(APPLCFLAGS) $(HOPPETCFLAGS) $(LHAPDFCXXFLAGS)
+AM_CXXFLAGS = -O2 -Wall -fopenmp -fPIC  -I. -I.. -I$(srcdir)  $(ROOTCFLAGS) $(APPLCFLAGS) $(HOPPETCFLAGS) $(LHAPDFCXXFLAGS)
 AM_CFLAGS   = -O2 -Wall -fPIC  -I. -I.. -I$(srcdir)  $(ROOTCFLAGS) $(APPLCFLAGS) $(HOPPETCFLAGS) $(LHAPDFCXXFLAGS)
 
 AM_LDFLAGS = $(ROOTARCH) -O2  $(ROOTLIBS) $(FCLIBS) $(APPLLIBS) $(LHAPDFLIB) $(FRTLLIB) $(HOPPETLIB)
