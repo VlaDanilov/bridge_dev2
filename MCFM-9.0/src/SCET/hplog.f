@@ -54,8 +54,8 @@
       real(dp):: Hi1(n1:n2),Hi2(n1:n2,n1:n2),Hi3(n1:n2,n1:n2,n1:n2), 
      $          Hi4(n1:n2,n1:n2,n1:n2,n1:n2)
       integer::infilldim,infill(3)
-      common /fillred/infilldim,infill 
-!$omp threadprivate(/fillred/)
+      common /fillredd/infilldim,infill 
+!$omp threadprivate(/fillredd/)
       real(dp),parameter::r2   = 1.4142135623730950488_dp
 ** check on the weight nw 
       if ( (nw.lt.1).or.(nw.gt.4) ) then 
@@ -288,8 +288,8 @@
      $          Gi3(-n2:-n1,-n2:-n1,-n2:-n1), 
      $          Gi4(-n2:-n1,-n2:-n1,-n2:-n1,-n2:-n1) 
       integer::infilldim,infill(3)
-      common /fillred/infilldim,infill 
-!$omp threadprivate(/fillred/)
+      common /fillredd/infilldim,infill 
+!$omp threadprivate(/fillredd/)
       integer::istorfill(3)
       integer,parameter::nphase(-1:1)=(/-1,1,-1/) 
       real(dp),parameter:: pi   = 3.14159265358979324_dp
@@ -386,8 +386,8 @@
 ** 
       integer::i,k1,k2,k3,k4,istorfill(3)
       integer::infilldim,infill(3)
-      common /fillred/infilldim,infill 
-!$omp threadprivate(/fillred/)
+      common /fillredd/infilldim,infill 
+!$omp threadprivate(/fillredd/)
       integer,parameter::nphase(-1:1)=(/-1,1,-1/) 
 
       real(dp),parameter:: pi   = 3.14159265358979324_dp
@@ -472,8 +472,8 @@
 ** 
       integer::nph1,nph2,nph3,nph4
       integer::infilldim,infill(3)
-      common /fillred/infilldim,infill 
-!$omp threadprivate(/fillred/)
+      common /fillredd/infilldim,infill 
+!$omp threadprivate(/fillredd/)
       integer::istorfill(3)
       integer,parameter::nphase(-1:1)=(/-1,1,-1/) 
 
@@ -571,8 +571,8 @@
       real(dp):: Hi1(n1:n2),Hi2(n1:n2,n1:n2),Hi3(n1:n2,n1:n2,n1:n2), 
      $          Hi4(n1:n2,n1:n2,n1:n2,n1:n2) 
       integer::infilldim,infill(3)
-      common /fillred/infilldim,infill 
-!$omp threadprivate(/fillred/)
+      common /fillredd/infilldim,infill 
+!$omp threadprivate(/fillredd/)
       real(dp),parameter::pinv = 0.318309886183790672_dp
       real(dp),parameter:: pi   = 3.14159265358979324_dp
 ** combining real and immaginary into the complex value 

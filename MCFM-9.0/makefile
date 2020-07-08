@@ -2001,6 +2001,7 @@ autoplots.o \
 bookrelew.o \
 gencuts_user.o \
 genplots.o \
+gridwrap.o \
 mdata.o \
 nplotter_user.o \
 nplotter.o \

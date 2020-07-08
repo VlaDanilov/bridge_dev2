@@ -44,6 +44,10 @@ c---          (if applicable), otherwise equal to zero
       include 'taucut.f'
       include 'lhcb.f'
 
+c--- APPLgrid - use of grids
+      include 'ptilde.f'
+      include 'APPLinclude.f'
+c--- APPLgrid - end
 
       real(dp):: p(mxpart,4),wt,wt2
       integer:: switch,nd
@@ -327,6 +331,10 @@ c         call nplotter_VHgaga(p,wt,wt2,switch,nd)
         write(6,*) 'unexpected plotindex in nplotter =',plotindex
         stop
       end select
+
+c--- APPLgrid - filling applgrid
+      if (creategrid) call fill_grid(p)
+c--- APPLgrid - endi
 
  888  continue
 

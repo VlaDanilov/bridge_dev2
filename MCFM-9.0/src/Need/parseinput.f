@@ -34,6 +34,7 @@
           ! [histogram]
           call cfg_add(cfg, "histogram%writetop", .false., "write top-drawer histograms")
           call cfg_add(cfg, "histogram%writetxt", .false., "write raw table file for each histogram")
+          call cfg_add(cfg, "histogram%grid", .false., "create APPL grid")
 
           ! [general]
           call cfg_add(cfg, "general%nproc", 1, "process number")
@@ -238,6 +239,12 @@
           include 'kprocess.f'
           include 'taucut.f'
           include 'ewinput.f'
+c           ---for APPLgrid
+          include 'mxpart.f'
+          include 'nf.f'
+          include 'maxd.f'
+          include 'APPLinclude.f'
+c          ---for APPLgrid
           character(len=cfg_string_len) :: mcfm_version, part, dynstring
 
           logical :: writerefs
@@ -291,6 +298,7 @@ c [nnlo]
 c [histogram]
           call cfg_get(cfg, "histogram%writetop", writetop)
           call cfg_get(cfg, "histogram%writetxt", writeroot)
+          call cfg_get(cfg, "histogram%grid", creategrid)
 
 c [masses]
           call cfg_get(cfg, "masses%hmass", hmass)

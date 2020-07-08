@@ -23,6 +23,13 @@
       implicit none
       include 'mpicommon.f'
 
+c--- APPLgrid - to use grids
+      include 'nf.f'
+      include 'mxpart.f'
+      include 'maxd.f'
+      include 'APPLinclude.f'
+c--- APPLgrid -end
+
       real(dp), intent(in) :: xinteg, xinteg_err
      
       if (rank == 0) then
@@ -54,6 +61,16 @@
 
           call writeAllHistograms()
           call writereference()
+
+          write (*,*) "--create grid in mcfm_exit", creategrid
+c--- APPLgrid - creating grid
+          if (creategrid) then
+          write (*,*) " before the my write_grid()"
+
+          call write_grid(xinteg)
+          endif
+c--- APPLgrid - end
+ 
       endif
 
       end

@@ -66,6 +66,11 @@
       include 'x1x2.f'
       include 'bypart.f'
       include 'taucut.f' ! for usescet
+c--- APPLgrid - to use grids
+      include 'ptilde.f'
+      include 'APPLinclude.f'
+      double precision psCR
+c--- APPLgrid - end
       integer:: pflav,pbarflav
 c--- To use VEGAS random number sequence :
       real(dp):: ran2
@@ -802,6 +807,16 @@ c      call checkgvec(-1,2,5,p,qq_tbg,qq_tbg_gvec)
         goto 66
       endif
 
+c--- APPLgrid - initialize array
+      if (creategrid.and.bin) then
+         do j=-nf,nf
+            do k=-nf,nf
+               weightb(j,k) = 0d0
+            enddo
+         enddo
+         weightfactor = 1d0
+      endif
+c--- APPLgrid - end     
 c--- do not calculate the flux if we're only checking the volume      
 c      if (case(1:4) .ne. 'vlch') then      
       flux=fbGeV2/(2._dp*xx(1)*xx(2)*W)
@@ -937,6 +952,13 @@ c--- DEFAULT
         sgnk=0
       endif
 
+c--- APPLgrid - save weight
+      if (currentPDF .eq. 0 .and. creategrid .and. bin ) then
+c---- print*,j,k,msq(j,k)
+           weightb(j,k) =  weightb(j,k) + msq(j,k)
+      endif
+c--- APPLgrid - end
+
       enddo
       enddo ! end loop over partons
 
@@ -1003,6 +1025,49 @@ c--- loop over all PDF error sets, if necessary
       endif
 
       if (bin) then
+c     APPLgrid - multiply by totalFactor
+            if (creategrid) then ! P.S. scale with factor
+               psCR = 1d0
+               if ( (kcase==ktt_tot)
+     &         .or. (kcase==kbb_tot)
+     &         .or. (kcase==kcc_tot) 
+     &         .or. (kcase==ktt_bbl)
+     &         .or. (kcase==ktt_ldk)
+     &         .or. (kcase==ktt_bbu)
+     &         .or. (kcase==ktt_udk)
+     &         .or. (kcase==ktt_bbh)
+     &         .or. (kcase==ktt_hdk)
+     &         .or. (kcase==ktthWdk)
+     &         .or. (kcase==kqq_ttg) ) then
+                  psCR = (1d0/ason2pi)**2
+               elseif ( (kcase==kW_cjet)) then
+                  psCR = (1d0/ason2pi)
+               endif
+               do j=-nflav,nflav
+                  do k=-nflav,nflav
+                    weightb(j,k)=weightb(j,k)*psCR
+                 enddo
+              enddo           
+              contrib      = 100
+              weightfactor = flux*pswt*wgt/BrnRat
+              ag_xx1       = xx(1)
+              ag_xx2       = xx(2)
+              ag_scale     = facscale
+              refwt        = val
+              refwt2       = val2
+C     print*,"  *******************************************"
+C     print*, "meWeightFactor = ", weightfactor,
+C     *             " me(2,-1) = " ,  weightb(2 ,-1) ," ", msq(2,-1),
+C     *             " me(-1,2) = " ,  weightb(-1 ,2) ," ", msq(-1,2),
+C     *             " me(1,-1) = " ,  weightb(1 ,-1) ," ", msq(1,-1),
+C     *             " me(-2,2) = " ,  weightb(-2 ,2) ," ", msq(-2,2)
+C     print*, " x1 = ",xx(1)," x2 = ",xx(2)," sca = ",facscale
+C     print *, "rewt = ", refwt
+C     print*,"  *********************************************"
+C     flush(6)
+              
+           endif
+c---  APPLgrid - end
 c--- for EW corrections, make additional weight available inside common block
         if (kewcorr /= knone) then
           wt_noew=lowint_noew*wgt

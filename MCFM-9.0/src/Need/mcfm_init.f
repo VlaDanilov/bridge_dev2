@@ -53,6 +53,9 @@
       include 'runname.f'
 
       include 'rtsmin.f'
+     
+      include 'ptilde.f'
+      include 'APPLinclude.f'
       real(dp):: p1ext(4),p2ext(4),p(mxpart,4),val
       integer:: j,k
       common/pext/p1ext,p2ext
